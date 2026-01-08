@@ -120,7 +120,5 @@ DEFT/
 
 ## Related Projects
 
-- [MapGPT](https://github.com/chen-judge/MapGPT): Map-Guided Prompting for VLN
-- [NavGPT](https://github.com/GengzeZhou/NavGPT): Explicit Reasoning in VLN with LLMs
+- [Recurrent-VLN-BERT](https://github.com/YicongHong/Recurrent-VLN-BERT)
 - [Matterport3D Simulator](https://github.com/peteanderson80/Matterport3DSimulator)
-
