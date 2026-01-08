@@ -1,0 +1,49 @@
+# NavGPT-2 Configuration for VLN-BERT Submodule
+# This configuration is used when NavGPT-2 is integrated as a submodule in VLN-BERT
+
+train_alg: dagger
+
+features: eva-clip-g
+
+seed: 0
+batch_size: 2
+
+root_dir: ./NavGPT_2/datasets
+# output_dir: ./NavGPT_2/datasets/R2R/exprs_map/finetune/navgpt2
+dataset: r2r
+# output_dir: ${outdir}
+world_size: 1
+tokenizer: bert      
+
+enc_full_graph: true
+graph_sprels: true
+fusion: global
+
+expert_policy: spl
+
+num_x_layers: 4
+
+max_action_steps: 15
+max_instr_len: 200
+
+lr: 1e-5
+iters: 200000
+log_every: 2500
+optim: adamW
+
+image_feat_size: 1408
+angle_feat_size: 4
+
+ml_weight: 0.2   
+
+feat_dropout: 0.4
+dropout: 0.5
+
+gamma: 0.
+
+
+feedback: argmax
+freeze_qformer: true
+qformer_ckpt_path: ./NavGPT_2/map_nav_src/models/lavis/output/NavGPT-InstructBLIP-FlanT5XL.pth
+resume_file: ./NavGPT_2/datasets/R2R/trained_models/best_val_unseen_xl 
+test: true

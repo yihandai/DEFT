@@ -1,0 +1,4 @@
+llm_model_name: gpt-4o
+# output_dir: ../datasets/R2R/exprs/val72_navgpt
+val_env_name: r2r_subset_instr_level_val72
+root_dir: ./NavGPT/datasets

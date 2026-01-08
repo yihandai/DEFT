@@ -1,0 +1,37 @@
+name: VLNBERT-test-mask-navgpt
+
+vlnbert: prevalent
+
+submit: 0
+test_only: 0
+
+train: testmask
+load: snap/VLNBERT-train-Surrogate_NavGPT_val_24vp/state_dict/best_val72_navgpt
+loadmask: snap/VLNBERT-train-mask-navgpt-025-2-24vp/state_dict/LAST_iter200
+
+# # load: snap/VLNBERT-train-Surrogate_NavGPT_val_24vp/state_dict/best_val72_navgpt
+# load: snap/VLNBERT-PREVALENT-final/state_dict/pretrained
+# loadmask: snap/VLNBERT-train-mask-navgpt-ablation/state_dict/LAST_iter2000
+
+features: places365_24vp
+maxAction: 15
+batchSize: 1
+feedback: sample
+lr: 1e-5
+iters: 300000
+optim: adamW
+
+ml_weight: 0.20
+maxInput: 80
+angle_feat_size: 128
+featdropout: 0.4
+dropout: 0.5
+
+target_agent: NavGPT
+val_set_custom: val72_navgpt # env for NavGPT
+val_set_custom_surr: MapGPT_72_scenes_processed # env for Xagent
+training_set_custom: surrogate10_navgpt # NOTE: just for initializing the env
+
+# Panoramic view configuration for NavGPT surrogate model
+panoramic_horizontal_views: 8
+vfov: 45 

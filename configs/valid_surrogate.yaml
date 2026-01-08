@@ -1,0 +1,37 @@
+# experiment id
+# name: VLNBERT-train-Surrogate_2
+name: VLNBERT-valid-Surrogate
+vlnbert: prevalent
+
+aug: data/prevalent/surrogate_data.json
+test_only: 0
+
+train: surrogate 
+
+features: places365
+features: places365_24vp
+maxAction: 15
+batchSize: 8
+feedback: surrogate
+lr: 1e-5
+iters: 300000
+optim: adamW
+
+ml_weight: 0.20
+maxInput: 80
+angle_feat_size: 128
+featdropout: 0.4
+dropout: 0.5
+
+training_set_custom: surrogate10
+val_set_custom: val72_navgpt
+# val_set_custom: MapGPT_72_scenes_processed
+# load: snap/VLNBERT-train-Surrogate/state_dict/best_val72
+load: snap/VLNBERT-train-Surrogate_NavGPT_val_24vp/state_dict/best_val72_navgpt
+# load: snap/VLNBERT-train-Surrogate_NavGPT2/state_dict/best_val72_navgpt2
+
+expert_policy: ndtw
+
+# Panoramic view configuration for NavGPT surrogate model
+panoramic_horizontal_views: 8
+vfov: 45

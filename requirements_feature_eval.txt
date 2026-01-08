@@ -1,0 +1,16 @@
+# Additional requirements for feature-level evaluation utilities
+# Install with: pip install -r requirements_feature_eval.txt
+
+# For BLIP-2 image captioning
+transformers>=4.30.0
+accelerate>=0.20.0
+sentencepiece>=0.1.99
+
+# For Fast-RCNN object detection
+# torchvision should already be installed, but ensure it's up to date
+# torchvision>=0.15.0
+
+# Additional dependencies
+Pillow>=9.0.0
+numpy>=1.21.0
+

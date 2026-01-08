@@ -1,0 +1,28 @@
+name: VLNBERT-train-mask-mapgpt
+
+vlnbert: prevalent
+
+aug: data/prevalent/prevalent_aug.json
+test_only: 0
+
+train: mask
+
+features: places365
+maxAction: 15
+batchSize: 8
+feedback: sample
+lr: 1e-5
+iters: 6000
+optim: adamW
+
+ml_weight: 0.20
+maxInput: 80
+angle_feat_size: 128
+featdropout: 0.4
+dropout: 0.5
+
+load: snap/VLNBERT-train-Surrogate/state_dict/best_val72
+ablation_pretrained: True
+
+target_agent: MapGPT
+val_set_custom: MapGPT_72_scenes_processed

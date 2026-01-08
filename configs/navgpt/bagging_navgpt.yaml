@@ -1,0 +1,40 @@
+name: VLNBERT-train-Bagging_NavGPT
+vlnbert: prevalent
+
+aug: data/prevalent/surrogate_data.json
+test_only: 0
+
+train: bagging 
+
+features: places365_24vp
+maxAction: 15
+batchSize: 8
+feedback: surrogate
+lr: 1e-5
+iters: 1000
+optim: adamW
+
+ml_weight: 0.20
+maxInput: 80
+angle_feat_size: 128
+featdropout: 0.4
+dropout: 0.5
+
+training_set_custom: surrogate10_navgpt
+val_set_custom: val72_navgpt
+load: snap/VLNBERT-PREVALENT-final/state_dict/pretrained
+
+expert_policy: ndtw
+
+
+# Bagging specific parameters
+bagging_agents: 5
+bootstrap_ratio: 0.8
+
+# Panoramic view configuration for NavGPT surrogate model
+panoramic_horizontal_views: 8
+vfov: 45
+
+# Parallel training parameters
+parallel_bagging: true
+max_workers: 2

@@ -1,0 +1,14 @@
+root_dir: ./MapGPT/datasets
+img_root: ./MapGPT/Observation_RGB
+split: MapGPT_72_scenes_processed
+# start: 100
+# end: 216  # the number of cases to be tested
+output_dir: ./MapGPT/datasets/exprs_map/test/
+max_action_len: 15
+save_pred: true
+stop_after: 3
+llm: gpt-4o
+response_format: json
+max_tokens: 1000
+
+batch_size: 1

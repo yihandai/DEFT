@@ -1,0 +1,55 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: flant5xl
+  load_finetuned: False
+  load_pretrained: True
+
+  pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/InstructBLIP/instruct_blip_flanxl_trimmed.pth"
+  finetuned: ""
+  # load_finetuned: True
+  # load_pretrained: False
+
+  # pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/InstructBLIP/instruct_blip_flanxl_trimmed.pth"
+  # finetuned: "/home/dell/dyh/vln_-bert/NavGPT-2/map_nav_src/models/lavis/output/NavGPT-InstructBLIP-FlanT5XL.pth"
+
+
+  # vit encoder
+  image_size: 224
+  drop_path_rate: 0
+  use_grad_checkpoint: False
+  vit_precision: "fp16"
+  freeze_vit: True
+
+  # Q-Former
+  num_query_token: 32
+
+  # T5
+  # Options for t5_model:
+  # 1. HuggingFace model ID: "google/flan-t5-xl" (will download from HuggingFace)
+  # 2. Absolute path: "/absolute/path/to/flan-t5-xl"
+  # 3. Relative path from NavGPT-2 root: "models/flan-t5-xl" or "cache/flan-t5-xl"
+  #    (relative to NavGPT-2 directory root)
+  # t5_model: "google/flan-t5-xl"
+  t5_model: "/home/dell/dyh/vln_-bert/NavGPT_2/flan-t5-xl"
+
+  # generation configs
+  prompt: ""
+
+
+preprocess:
+    vis_processor:
+        train:
+          name: "blip_image_train"
+          image_size: 224
+        eval:
+          name: "blip_image_eval"
+          image_size: 224
+    text_processor:
+        train:
+          name: "blip_caption"
+        eval:
+          name: "blip_caption"

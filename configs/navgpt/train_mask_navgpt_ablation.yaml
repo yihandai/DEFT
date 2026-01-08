@@ -1,0 +1,32 @@
+name: VLNBERT-train-mask-navgpt-ablation
+
+vlnbert: prevalent
+
+aug: data/prevalent/prevalent_aug.json
+test_only: 0
+
+train: mask
+
+features: places365_24vp
+maxAction: 15
+batchSize: 8
+feedback: sample
+lr: 1e-5
+iters: 2000
+optim: adamW
+
+ml_weight: 0.20
+maxInput: 80
+angle_feat_size: 128
+featdropout: 0.4
+dropout: 0.5
+
+load: snap/VLNBERT-train-Surrogate_NavGPT_val_24vp/state_dict/best_val72_navgpt
+ablation_pretrained: True
+
+target_agent: MapGPT
+val_set_custom: MapGPT_72_scenes_processed
+
+# Panoramic view configuration for NavGPT surrogate model
+panoramic_horizontal_views: 8
+vfov: 45

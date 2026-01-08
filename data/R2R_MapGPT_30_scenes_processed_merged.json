@@ -1,0 +1,513 @@
+[
+  {
+    "distance": 7.61,
+    "heading": 3.272,
+    "instr_id": "48_1",
+    "instruction": "Walk through the kitchen. Go past the sink and stove stand in front of the dining table on the bench side.",
+    "path": [
+      "6c4ef6ac616042bc9fe4adc5f6d21b10",
+      "74a12d0675b54d6193ba63104a6a8e2e",
+      "f553a3287fb2438b979f09b09448c7c0",
+      "e0d2a4e22abe44d7810d7e448fff6704",
+      "62e602fc5b85463dbd8f48ba625d05ef",
+      "1e951fdbfd9d45bbaf935da945f5425c",
+      "814d9aba371640e5a70bcb7833bfe08f"
+    ],
+    "path_id": 48,
+    "scan": "8WUmhLawc2A"
+  },
+  {
+    "distance": 9.18,
+    "heading": 3.633,
+    "instr_id": "7198_1",
+    "instruction": "Walk down the hall and to the right. Walk down the stairs and turn right. Walk down the stairs and stop at the bottom of the stairs.",
+    "path": [
+      "5062afb29ed34159a1e05c60e6cf6585",
+      "1e61d22315c945378096f3055645d9e1",
+      "5f1b89f0e0f341849fcdab381165cd26",
+      "57bdea1f5113402d9b4a65450e030424",
+      "21e7d627b7b34355a52f3c88cb2ad446",
+      "34d076b898bd4f539d5be04c0bacc57e",
+      "21e7d627b7b34355a52f3c88cb2ad446",
+      "fea557b2ef0e46929f85f0bfd71f9bdc",
+      "21e7d627b7b34355a52f3c88cb2ad446",
+      "f9e969d895654fb5b82a1366e0b72762",
+      "81309402fcf041df881e7aca01b8b4f2",
+      "f9e969d895654fb5b82a1366e0b72762",
+      "21e7d627b7b34355a52f3c88cb2ad446",
+      "37fc3df516b34c7b95d95c9097151ad9",
+      "4dcc93d2006646e19f9b2748dcb4f860"
+    ],
+    "path_id": 7198,
+    "scan": "i5noydFURQK"
+  },
+  {
+    "distance": 7.54,
+    "heading": 1.739,
+    "instr_id": "7238_0",
+    "instruction": "Go to the bottom of the stairs and turn left. Walk along the orange wall, past the stone statue, and go through the doorway. Turn left and stop at the top of the steps leading down.",
+    "path": [
+      "a3fe827d49db4f7caa076c313434d418",
+      "50476a17346a4879906f81b47b9418de",
+      "3b2ba223f6a445a6bf4561f1853e83c1",
+      "e60f96413bf448889377affdd919ba35",
+      "3b2ba223f6a445a6bf4561f1853e83c1",
+      "50476a17346a4879906f81b47b9418de",
+      "a3fe827d49db4f7caa076c313434d418",
+      "e0f025c0baa94beba57ea499e3d846c5",
+      "8e1fa462cea64696aa723bbfbdb1b21e",
+      "4cac488dae6a442289ce32fd0b6a42fe",
+      "76c9116d417849c6be0f37a8b353e0d8",
+      "9167f8d20b954ccf97b09d33762cf4d5",
+      "64565f72062245da87430cc31dd383d9",
+      "187589bb7d4644f2943079fb949c0be9",
+      "cc25797eeb974e54ae3f1fc30e0d19ef"
+    ],
+    "path_id": 7238,
+    "scan": "1LXtFkjw3qL"
+  },
+  {
+    "distance": 12.36,
+    "heading": 1.856,
+    "instr_id": "5356_0",
+    "instruction": "Exit the bedroom, walk past the stairs and wait in the room to the right of the bathroom.",
+    "path": [
+      "ba9af4d3f96d4b47bd45d828f2d61d2c",
+      "055135a74623475bbaa7fe3a9b34d5e3",
+      "2343ef3bf04a4433af62f0d527d7512a",
+      "0abcad1faaaa45d296aac7b2083ebe54",
+      "1c2596bea79c481db4af3b0a26342978",
+      "0abcad1faaaa45d296aac7b2083ebe54",
+      "ba9af4d3f96d4b47bd45d828f2d61d2c",
+      "3ed7021b489144e9931aa86d6ed282c1",
+      "3789920326234f7a91bde25661a0a3fc",
+      "1015e20d2dca4a01b6cca0ca0d71c29a",
+      "c10178a834d7433f8294a88b74d71954"
+    ],
+    "path_id": 5356,
+    "scan": "759xd9YjKW5"
+  },
+  {
+    "distance": 6.7,
+    "heading": 3.08,
+    "instr_id": "4134_2",
+    "instruction": "Turn to the left and enter in the last door on the right. Once in, go up half of the ladder and stop.",
+    "path": [
+      "05d8dd39b5de44b58287a6de59cdba37",
+      "846f6ed84cdc4f3c9400cbdfb4e098eb",
+      "185a777f88df4f4caef435ac26323c85",
+      "629d8b184bc64fcab6bea40d18d71c66",
+      "c0b35cf0420249eebcfd32127aec6a6d"
+    ],
+    "path_id": 4134,
+    "scan": "cV4RVeZvu5T"
+  },
+  {
+    "distance": 8.75,
+    "heading": 1.975,
+    "instr_id": "6565_2",
+    "instruction": "Stand so the hallway with the stairs is behind you and walk down the walkway between the two rows of columns. Walk straight until you enter another passageway on the opposite side of the large open room. Stop just before entering the last room with the door leading outside.",
+    "path": [
+      "58cdf4425f984bc8bec9ed57b96feff4",
+      "a5dc96ee500247d881a524dffff8b018",
+      "3c639193293c4b7682646fe59d68c556",
+      "58cdf4425f984bc8bec9ed57b96feff4"
+    ],
+    "path_id": 6565,
+    "scan": "uNb9QFRL6hY"
+  },
+  {
+    "distance": 10.86,
+    "heading": 4.055,
+    "instr_id": "4332_1",
+    "instruction": "Walk straight toward the bar with the chairs/stool. Turn left and go straight until you get to three tables with chairs. Turn left and wait near the couch.",
+    "path": [
+      "c9e8dc09263e4d0da77d16de0ecddd39",
+      "f33c718aaf2c41469389a87944442c62",
+      "ae91518ed77047b3bdeeca864cd04029",
+      "66d4adb61b57494aa2c1ad141a0fad9b",
+      "6776097c17ed4b93aee61704eb32f06c"
+    ],
+    "path_id": 4332,
+    "scan": "8194nk5LbLH"
+  },
+  {
+    "distance": 6.8,
+    "heading": 2.242,
+    "instr_id": "3965_2",
+    "instruction": "Exit the bedroom and turn left, past the bathroom. Continue through the short hallway, past the washroom and pantry. Wait in the intersection with the long hallway, in between the low shelf and table.",
+    "path": [
+      "ead481533f834704bd489d3d44b6a03a",
+      "997b813443c64de5b38312642e937223",
+      "b8c7c025564d4c8391833236f4f782c0",
+      "4c78adff490c4973aa3e09bfe14217aa",
+      "e6ba61dd42c64410877149cc11766a8b",
+      "b8c7c025564d4c8391833236f4f782c0",
+      "e1f88263b98d46909c3e00e9250b6a4b",
+      "0cf178fb23754cc0ac3b93398b112ddc",
+      "11bdfcf0a0984901a1d6f60fdd8ee4a6",
+      "a80acc2328154455965a8be4133dee71",
+      "19b2aa3137ae44f19821ec0f3da4a836",
+      "b1d919ce693d442d8273032815ce860a",
+      "19b2aa3137ae44f19821ec0f3da4a836",
+      "a80acc2328154455965a8be4133dee71",
+      "11bdfcf0a0984901a1d6f60fdd8ee4a6"
+    ],
+    "path_id": 3965,
+    "scan": "zsNo4HB9uLZ"
+  },
+  {
+    "distance": 5.62,
+    "heading": 1.136,
+    "instr_id": "6992_0",
+    "instruction": "Turn around and exit the room. Turn left and enter the bedroom. Wait there.",
+    "path": [
+      "d994801b7bc84e2fb32d1bfd81bf1941",
+      "b0b19f3f07b5406b990c704f6c5103a4",
+      "3ff975d7827d476db96e07ab050e8ede",
+      "eb11300f27264e5298069dfecc3d94b6",
+      "934d88f8109b4024b8d9408e66c04f36",
+      "c9fd7ea9b9e948cebf2b8e4b5f5407d7",
+      "124cb258e88347a99605655d1d69d8df"
+    ],
+    "path_id": 6992,
+    "scan": "oLBMNvg9in8"
+  },
+  {
+    "distance": 11.66,
+    "heading": 3.751,
+    "instr_id": "6250_0",
+    "instruction": "Walk down one flight of stairs and stop on the landing.",
+    "path": [
+      "af3af33b0120469c9a00daa0d0b36799",
+      "c55fa077761c4154af4b26da88eee80d",
+      "744eba592017466eab0da528e0cfdf7c",
+      "f53e378ee8fa4edc8cbf2ffcb4a99899",
+      "cd680b57443748fcae2de7c8e39970ad",
+      "f53e378ee8fa4edc8cbf2ffcb4a99899",
+      "744eba592017466eab0da528e0cfdf7c",
+      "c55fa077761c4154af4b26da88eee80d",
+      "248492258fd5435c8276f59f63ddf0ef"
+    ],
+    "path_id": 6250,
+    "scan": "VLzqgDo317F"
+  },
+  {
+    "distance": 11.31,
+    "heading": 3.145,
+    "instr_id": "2513_0",
+    "instruction": "Walk past the chairs and to the left. Walk in front of the chair and stop.",
+    "path": [
+      "897ee6cdc5314ffaa23bf487ac2e0def",
+      "12cd53fa035549b29c5afe191ca7c0bb",
+      "cf90b02d6cdb45c480bfcdf4cbba79ac",
+      "88e1a361dfe240d49d9f3bf34a8f1617",
+      "9ba0cda9b1dc43c38071ac00ad297045",
+      "88e1a361dfe240d49d9f3bf34a8f1617",
+      "5d8ebc45c0c34488aca8f4edf86ec97c",
+      "7913c846ee9443daafb87cab26566963",
+      "0ae8865e3c2d4c3388014c7d85b5ed12",
+      "8f32df474841499babd7656450f9cae1"
+    ],
+    "path_id": 2513,
+    "scan": "p5wJjkQkbXX"
+  },
+  {
+    "distance": 14.22,
+    "heading": 4.062,
+    "instr_id": "2539_1",
+    "instruction": "Facing the three archways go forward and immediately right, go through the rectangular archway and go into the first room on your left, go along the table, and stop at the chairs.",
+    "path": [
+      "3611ca6eb11f4a32a7cd3c073862860d",
+      "1f8182156ccd41f39c552ac05ab24877",
+      "43b70941e6e24925b9097684ddf31c84",
+      "b2d31a869b644c738697a237d4e724b5",
+      "3d6c224493aa4b8fa5fd16e7ae8e2d66"
+    ],
+    "path_id": 2539,
+    "scan": "2n8kARJN3HM"
+  },
+  {
+    "distance": 7.58,
+    "heading": 3.185,
+    "instr_id": "6119_1",
+    "instruction": "Walk through the bathroom door. Walk through the foyer and go into the room to the right of the three panel artwork. Step into the room near the massage chair.",
+    "path": [
+      "4a153b13a3f6424784cb8e5dabbb3a2c",
+      "28c66f311baf4ffa9cf71e45bf1ca165",
+      "67a696124eb54cb9bb570f28df5fb8ab",
+      "c7ed1140e587433d8149e39cd09f88a2",
+      "fdf32301e35049ffa791629b4fe34d5e",
+      "cbd3e6decb8147e3a79d6fb9af4585a3",
+      "db4e5d9da16446ceb931d97aef767f28",
+      "e5d9e78360d4473f81fc7f0c87765eb1",
+      "a4e9fd45c60c4fda89cda4c256bb5a81",
+      "fdf32301e35049ffa791629b4fe34d5e",
+      "d0b27407bb1e4e2d91592959e52bd102"
+    ],
+    "path_id": 6119,
+    "scan": "ur6pFq6Qu1A"
+  },
+  {
+    "distance": 9.18,
+    "heading": 3.633,
+    "instr_id": "7198_0",
+    "instruction": "Turn around, to the left and walk down the hallway. Turn right and walk down the stairs toward the kitchen. Stop at the stair landing.",
+    "path": [
+      "5062afb29ed34159a1e05c60e6cf6585",
+      "dd4e4342c9d849c6881d1e4ba1b816da",
+      "0bc53661f71543df85e5499ea85f74c7",
+      "e2de0f25e4f2451c82292a347d3a5f55",
+      "d9d2484fd1b44448b04b6eadf278d9db",
+      "871d8081c12f4c8585e62515f441d69a"
+    ],
+    "path_id": 7198,
+    "scan": "i5noydFURQK"
+  },
+  {
+    "distance": 6.06,
+    "heading": 3.506,
+    "instr_id": "3399_2",
+    "instruction": "With the painting of the mermaid towards your right, head straight. After passing the counter towards your right, turn right and wait.",
+    "path": [
+      "10c252c90fa24ef3b698c6f54d984c5c",
+      "77a1a11978b04e9cbf74914c98578ab8",
+      "b185432bf33645aca813ac2a961b4140",
+      "5e9f4f8654574e699480e90ecdd150c8",
+      "ee59d6b5e5da4def9fe85a8ba94ecf25",
+      "7ad0b4e15c4f4cf38f56efbbcadfbf6a",
+      "ee59d6b5e5da4def9fe85a8ba94ecf25",
+      "b2e9278f9b8f4661abcb0446d2cbb98e",
+      "0e92a69a50414253a23043758f111cec",
+      "b2e9278f9b8f4661abcb0446d2cbb98e",
+      "c429b363fd3145fe8a7631bbe9644066"
+    ],
+    "path_id": 3399,
+    "scan": "17DRP5sb8fy"
+  },
+  {
+    "distance": 10.67,
+    "heading": 5.81,
+    "instr_id": "5166_1",
+    "instruction": "Turn left and exit out the door. Walk all the way across the room to the other side. When you reach the windows on the other side, turn left and stop right before you reach the door to exit.",
+    "path": [
+      "cf638911e4b74d188c30f79332ed9922",
+      "389f67e9de9b4f729127c2bc2f67a316",
+      "cec763dd78394e3dac4b14da1611b51a",
+      "96e014c3d5894319b4155277e04ae637"
+    ],
+    "path_id": 5166,
+    "scan": "E9uDoFAP3SH"
+  },
+  {
+    "distance": 11.09,
+    "heading": 5.46,
+    "instr_id": "2674_0",
+    "instruction": "Walk past the dining area, past the living room, and wait.",
+    "path": [
+      "09c10c580a0e4b4cb4f6f9445c4509e0",
+      "d12a35cb161641318a92f9e5dd8915db",
+      "1e87a0b7776d48c7a05569b182f8c3a4",
+      "fb7e82f5b99340eabb9a579772176b33",
+      "7bb74d11234146b19b211e4b1c319cbf"
+    ],
+    "path_id": 2674,
+    "scan": "kEZ7cmS4wCh"
+  },
+  {
+    "distance": 6.7,
+    "heading": 3.08,
+    "instr_id": "4134_1",
+    "instruction": "Enter the first door on the right and wait near the top of the ladder.",
+    "path": [
+      "05d8dd39b5de44b58287a6de59cdba37",
+      "20a224daa51e4890a3a954239da2f1c4",
+      "7cd02069ac1546319b95be27fc04d7b5",
+      "5125c4a0a99f45788e694d5a73ba99c7",
+      "20f70ab4efec496c86529075648caef2",
+      "1b321779a4374c2b952c51820daa9e6c"
+    ],
+    "path_id": 4134,
+    "scan": "cV4RVeZvu5T"
+  },
+  {
+    "distance": 11.51,
+    "heading": 2.261,
+    "instr_id": "4605_0",
+    "instruction": "Exit bedroom into hall and turn left to another bedroom, make your way to the bathroom and stop.",
+    "path": [
+      "8761fe0f67a041cf96957879f73fbd5e",
+      "0608309a14594ef9ac53c26b9e03a1ae",
+      "d1af2f90794243db807d60a07050941c",
+      "505ca3ca13414b7884dd6332040ca52c",
+      "ab2d0f38b21e4493a632fd5aa8ef99a8",
+      "4e06453cd8c24ea78797c10b0e12639f"
+    ],
+    "path_id": 4605,
+    "scan": "aayBHfsNo7d"
+  },
+  {
+    "distance": 10.86,
+    "heading": 4.055,
+    "instr_id": "4332_2",
+    "instruction": "Go forward toward the windows. Go toward the the far couch, Stop next to the couch, in front of the windows.",
+    "path": [
+      "c9e8dc09263e4d0da77d16de0ecddd39",
+      "71bf74df73cd4e24a191ef4f2338ca22",
+      "fcd90a404061413385286bef9662630e",
+      "2393bffb53fe4205bcc67796c6fb76e3"
+    ],
+    "path_id": 4332,
+    "scan": "8194nk5LbLH"
+  },
+  {
+    "distance": 10.38,
+    "heading": 5.226,
+    "instr_id": "5876_1",
+    "instruction": "Walk into the hallway and turn left. Walk to the left of the railing and across the hall past the plant. Stop to the left of the stairs.",
+    "path": [
+      "3f9667c2794b467cad8075b6f5351edb",
+      "a17b80e0e3d04c6a901df849fb70c914",
+      "8d7d690182ad4ad2b898b8b221cbaf36",
+      "6f74aff5213145d989f9a30bcd69a978"
+    ],
+    "path_id": 5876,
+    "scan": "TbHJrupSAjP"
+  },
+  {
+    "distance": 11.76,
+    "heading": 0.614,
+    "instr_id": "6526_2",
+    "instruction": "head inside the building. turn right, then wait inside the bedroom.",
+    "path": [
+      "e5d22d5625714f54add784abac16c69f",
+      "13c191f506114c73b70830b89e195aa6",
+      "d52aaea9fc6e4d5fbecd0220eb9da436",
+      "4890b24fbb59414892ca854895896126",
+      "37cb64e0cddc4f20b309abc4ff5344c2"
+    ],
+    "path_id": 6526,
+    "scan": "Uxmj2M2itWa"
+  },
+  {
+    "distance": 14.22,
+    "heading": 4.062,
+    "instr_id": "2539_0",
+    "instruction": "Turn around until you're facing the middle of three arches with a table surrounded by six chairs behind you. Walk through the middle arch until you see a long table with eight chairs on each side and a fireplace further down in the next room to your right. There will be a door leading to the outside on your left. Turn ninety degrees to the right and walk towards the fireplace with the long table towards your left, stopping just before reaching the carpet in front of the fireplace.",
+    "path": [
+      "3611ca6eb11f4a32a7cd3c073862860d",
+      "1f8182156ccd41f39c552ac05ab24877",
+      "dac4509f882848258838272f16d18302"
+    ],
+    "path_id": 2539,
+    "scan": "2n8kARJN3HM"
+  },
+  {
+    "distance": 6.06,
+    "heading": 3.506,
+    "instr_id": "3399_0",
+    "instruction": "Walk past the large picture and chair. Walk past the dining room table turn right into the hallway and stop.",
+    "path": [
+      "10c252c90fa24ef3b698c6f54d984c5c",
+      "77a1a11978b04e9cbf74914c98578ab8",
+      "b185432bf33645aca813ac2a961b4140",
+      "5e9f4f8654574e699480e90ecdd150c8",
+      "ee59d6b5e5da4def9fe85a8ba94ecf25"
+    ],
+    "path_id": 3399,
+    "scan": "17DRP5sb8fy"
+  },
+  {
+    "distance": 6.7,
+    "heading": 3.08,
+    "instr_id": "4134_0",
+    "instruction": "With the door going outside on your right, walk straight out of the room through the door in front of you. Go up the ladder and stop on the third rung from the top.",
+    "path": [
+      "05d8dd39b5de44b58287a6de59cdba37",
+      "846f6ed84cdc4f3c9400cbdfb4e098eb",
+      "185a777f88df4f4caef435ac26323c85",
+      "629d8b184bc64fcab6bea40d18d71c66",
+      "c0b35cf0420249eebcfd32127aec6a6d",
+      "39f7bd2434cc4f4798baec7990880eb6"
+    ],
+    "path_id": 4134,
+    "scan": "cV4RVeZvu5T"
+  },
+  {
+    "distance": 10.28,
+    "heading": 0.539,
+    "instr_id": "2215_1",
+    "instruction": "Go up four steps then turn right and go down that hallway until you get to a door on the right go into that room and stand by entrance.",
+    "path": [
+      "fa51cb2051f240d795737cdffeda6178",
+      "12c934ed973740efbdbe207ab3a064d3",
+      "b9152c697f4c4a2fb4eef96ed220b484",
+      "e40675d8209d426e8f60cdd315953cab",
+      "7bf81bd8601e4bde87ef2365f625288c",
+      "720ca9c0b604445bab3bd731000bc5ca"
+    ],
+    "path_id": 2215,
+    "scan": "s8pcmisQ38h"
+  },
+  {
+    "distance": 5.5,
+    "heading": 6.028,
+    "instr_id": "575_1",
+    "instruction": "With the pool on your left walk straight and go through the tan and green patio chairs towards the stairs out of the patio stopping before you hit the mosaic at the bottom of the stairs.",
+    "path": [
+      "e775ea81e83c45719de5a1577f8f7e39",
+      "9b2b12257e9a4c5d9f99f141769e9301",
+      "4739d48c61a04deab15db1eb2c906a96",
+      "f1f56adaf5034a25929562d6c3213a8c"
+    ],
+    "path_id": 575,
+    "scan": "Pm6F8kyY3z2"
+  },
+  {
+    "distance": 10.86,
+    "heading": 4.055,
+    "instr_id": "4332_0",
+    "instruction": "Walk to the other end of the lobby and wait near the exit.",
+    "path": [
+      "c9e8dc09263e4d0da77d16de0ecddd39",
+      "71bf74df73cd4e24a191ef4f2338ca22",
+      "fcd90a404061413385286bef9662630e",
+      "2393bffb53fe4205bcc67796c6fb76e3"
+    ],
+    "path_id": 4332,
+    "scan": "8194nk5LbLH"
+  },
+  {
+    "distance": 9.93,
+    "heading": 4.79,
+    "instr_id": "2371_1",
+    "instruction": "Pass the desk and head straight until you pass the pool. Wait right at the entrance of the room with the beaded curtain.",
+    "path": [
+      "96a8a59e077f405c84ff77a07f6b108f",
+      "1a792bc0a3fd47baa8a032e72ec6136b",
+      "65bf8725617f40fc96ce7f54edfc2576",
+      "ca2525d9ecd14dba84c49be763f20adb",
+      "959ae3ecae924fedb6a27c045968a05e"
+    ],
+    "path_id": 2371,
+    "scan": "x8F5xyUWy9e"
+  },
+  {
+    "distance": 6.4,
+    "heading": 6.235,
+    "instr_id": "7042_2",
+    "instruction": "Go straight along on the pillars keeping to the right of them until you're passed the long wooden block, then turn right to go behind the block and then go straight and stop between the last and second to last book stand.",
+    "path": [
+      "f8e13e216dd6477ea05e694e2f1478d9",
+      "df0b69b34d04453691b72a6c16923756",
+      "6fbd170d8df746b0b10e3801e2dad706",
+      "f8e13e216dd6477ea05e694e2f1478d9",
+      "df0b69b34d04453691b72a6c16923756",
+      "47a69295198f4265958b9b1d497c328d",
+      "8a65d3586fed4c5f9e0f28fc184b3ff2",
+      "87407bb6ed614926b91fc3e27eab766e"
+    ],
+    "path_id": 7042,
+    "scan": "pLe4wQe7qrG"
+  }
+]

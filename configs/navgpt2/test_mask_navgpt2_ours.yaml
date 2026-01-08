@@ -1,0 +1,33 @@
+name: VLNBERT-test-mask-navgpt2
+
+vlnbert: prevalent
+
+submit: 0
+test_only: 0
+
+train: testmask
+load: snap/VLNBERT-train-Surrogate_NavGPT2/state_dict/best_val72_navgpt2
+loadmask: snap/VLNBERT-train-mask-navgpt2-05-3/state_dict/LAST_iter500
+
+
+features: places365
+maxAction: 15
+batchSize: 1
+feedback: sample
+lr: 1e-5
+iters: 300000
+optim: adamW
+
+ml_weight: 0.20
+maxInput: 80
+angle_feat_size: 128
+featdropout: 0.4
+dropout: 0.5
+
+target_agent: NavGPT2
+val_set_custom: val72_navgpt2 # env for NavGPT2
+val_set_custom_surr: MapGPT_72_scenes_processed # env for Xagent
+# training_set_custom: surrogate10_navgpt2 # NOTE: just for initializing the env
+training_set_custom: surrogate10 # NOTE: just for initializing the env
+
+timelevelbaseline: ours500
