@@ -242,62 +242,6 @@ class FeatureAgentEnsemble_NavGPT2(FeatureAgent_NavGPT2):
                         mode=test_model,
                     )
                 )
-            elif test_model in ["guided_IG"]:
-                images, attribution, candidata_list = self.exp.get_guided_ig(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features,
-                    language_inputs,
-                    language_attention_mask,
-                    token_type_ids,
-                )
-            elif test_model in ["smdl"]:
-                images, attribution, candidata_list = self.exp.exp(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["random"]:
-                images, attribution, candidata_list = self.exp.compute_random_salency(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["fg_cam"]:
-                images, attribution, candidata_list = self.exp.compute_FG_CAM(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["hsic"]:
-                images, attribution, candidata_list = self.exp.compute_hsic_attribution(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                    grid_size=getattr(args, "hsic_grid_size", 8),
-                    nb_design=getattr(args, "hsic_nb_design", 500),
-                    perturbation_function=getattr(
-                        args, "hsic_perturbation", "inpainting"
-                    ),
-                    batch_size=getattr(args, "hsic_batch_size", 32),
-                )
             else:
                 print(f"test_model {test_model} not supported")
                 exit(0)
@@ -797,11 +741,6 @@ class FeatureAgentEnsemble_NavGPT2(FeatureAgent_NavGPT2):
             instr_id = perm_obs[0]["instr_id"]
 
             # Load the ensemble saliency map and rank
-            # file_name = (
-            #     "ensemble_hard.npy"
-            #     if self.ensemble_mode == "hard_vote"
-            #     else "ensemble.npy"
-            # )
             file_name = "ensemble" + f"_{args.bagging_agents}" + ".npy"
             attr_map = np.load(
                 os.path.join(
@@ -1351,32 +1290,6 @@ class FeatureAgentEnsemble_NavGPT2(FeatureAgent_NavGPT2):
         """
         test_model = args.feature_level_baseline
         assert test_model is not None, "test_model cannot be None"
-
-        # print("Phase 3: Draw heatmap overlay")
-        # self.env.reset_epoch(shuffle=(iters is not None))
-        # self.losses = []
-        # self.results = {}
-        # looped = False
-        # self.loss = 0
-
-        # if iters is not None:
-        #     assert False, "iters is not None"
-        # else:
-        #     while True:
-        #         print("new rollout")
-        #         traj = self.rollout_mask_test_navgpt2_feature_ensemble_draw(
-        #             test_model=test_model,
-        #             mode="del",
-        #             # reset=False,
-        #             reset=True,
-        #             perturb_ratio=0.25,
-        #         )
-        #         if traj["instr_id"] in self.results:
-        #             looped = True
-        #         else:
-        #             self.results[traj["instr_id"]] = traj["path"]
-        #         if looped:
-        #             break
 
         phase1 = False  # Generate saliency maps for each agent
         phase2 = False  # Ensemble saliency maps

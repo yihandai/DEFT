@@ -405,15 +405,6 @@ class Seq2SeqAgent(BaseAgent):
                         break
                 assert index_vp_next is not None, "the viewpoint is not in the path!"
                 vp_next = ob["gt_path"][index_vp_next]
-                # for k, candidate in enumerate(ob["candidate"]):
-                #     if candidate["viewpointId"] == vp_next:  # Next view point
-                #         a[i] = k
-                #         break
-                # else:  # Stop here
-                #     assert (
-                #         vp_next == ob["viewpoint"]
-                #     )  # The teacher action should be "STAY HERE"
-                #     a[i] = len(ob["candidate"])
                 for k, vpid in enumerate(vpids[i]):
                     if vpid == vp_next:
                         a[i] = k
@@ -449,8 +440,6 @@ class Seq2SeqAgent(BaseAgent):
         return torch.from_numpy(a).cuda()
 
     def generate_pseudo_action(self, logit, candidate_mask, mode="sample"):
-        # h_t, logit = self.vln_bert_noneupdate(**visual_inputs)
-        # h_t, logit = self.vln_bert(**visual_inputs)
         logit.masked_fill_(candidate_mask, -float("inf"))
         if mode == "sample":
             probs = F.softmax(logit, 1)  # sampling an action from model
@@ -467,23 +456,16 @@ class Seq2SeqAgent(BaseAgent):
         It will convert the action panoramic view action a_t to equivalent egocentric view actions for the simulator
         """
         navgpt_mode = args.panoramic_horizontal_views == 8
-        # print("a_t", a_t)
         if navgpt_mode:  # navgpt mode
             for i, idx in enumerate(perm_idx):
-                # print("i", i)
-                # print("idx", idx)
                 action = a_t[i]
                 if action != -1:  # -1 is the <stop> action
                     select_candidate = perm_obs[i]["candidate"][action]
                     normalized_heading = select_candidate["normalized_heading"]
                     normalized_elevation = select_candidate["normalized_elevation"]
-                    # print("select_candidate", select_candidate)
                     state = self.env.env.sims[idx].getState()[0]
                     current_heading = state.heading
                     rel_heading = normalized_heading - current_heading
-                    # print("normalized_heading", normalized_heading)
-                    # print("current_heading", current_heading)
-                    # print("rel_heading", rel_heading)
                     self.env.env.sims[idx].newEpisode(
                         [select_candidate["scanId"]],
                         [select_candidate["viewpointId"]],
@@ -554,22 +536,11 @@ class Seq2SeqAgent(BaseAgent):
         eta = []
         for i in range(len(obs)):
             scan = obs[i]["scan"]
-            # 1
             instr_id = obs[i]["instr_id"]
             scan, gt_traj = self.env.gt_trajs[instr_id]
-            # path = [vp for vp in traj[i]["path"]]
             path = traj[i]["path"]
             final_position = path[-1][0]  # the first of [view_id, angle, vofv]
             nav_error = self.env.distances[scan][final_position][gt_traj[-1]]
-            # # path = [vp[0] for vp in states["traj"][i]["path"]]
-            # # path = [vp[0] for vp in traj[i]["path"]]
-            # # gt_path = obs[i]["gt_path"]
-            # gt = self.gt[instr_id.split("_")[-2]]
-            # goal = gt["path"][-1]
-            # path = [vp for vp in traj[i]["path"]]
-            # final_position = path[-1][0]  # the first of [view_id, angle, vofv]
-            # # nav_error = self.env.distances[scan][path[-1]][gt_path[-1]]
-            # nav_error = self.distances[gt["scan"]][final_position][goal]
             success = float(nav_error < self.ERROR_MARGIN)
             eta.append(success)
         return eta
@@ -582,27 +553,10 @@ class Seq2SeqAgent(BaseAgent):
 
         :return:
         """
-        # if self.feedback == "teacher" or self.feedback == "argmax":
-        #     train_rl = False
         train_rl = True
 
         if reset:  # Reset env
             obs = np.array(self.env.reset())
-            # ["mJXqzFtmKg", "82sE5b5pLXE", "V2XKFyX4ASd", "SN83YJsR3w2", "JeFG25nYj2p", "ur6pFq6Qu1A", "Vvot9Ly1tCj", "cV4RVeZvu5T"]
-            # ["37c2223d40cb4aedb1563e5e0c3a53e1", "dfce0b29de62478583bbffdd7cbb419b", "d2595a5f98cf41a78159ef46ed27506a", "7cc396bac34f4fd3a468f0668e11bd25", "126ef6e65677477f826f0b6ddbcab9af", "e5e1301c040f4617b2e9512bc4fb1c78", "813bda5bbbda4cfb9851db7f2508d4b5", "8a27e5d9583e4459a0db21d42d8f0249"]
-            # [0.5235987755982988, 5.759586531581287, 1.5707963267948966, 2.0943951023931953, 5.235987755982988, 3.665191429188092, 0.5235987755982988, 0.0]
-
-            # for i in range(len(obs)):
-            #     print(obs[i]["scan"])
-            #     print(obs[i]["viewpoint"])
-            #     print(obs[i]["heading"])
-            # obs = np.array(
-            #     self.env.set_batch(
-            #         scan_id= "82sE5b5pLXE",
-            #         viewpoint_id="dfce0b29de62478583bbffdd7cbb419b",
-            #         heading=5.759586531581287,
-            #     )
-            # )
         else:
             obs = np.array(self.env._get_obs())
 
@@ -699,20 +653,20 @@ class Seq2SeqAgent(BaseAgent):
             candidate_mask = vln_utils.length2mask(candidate_leng)
             # logit.masked_fill_(candidate_mask, -float("inf"))
 
-            # 用原策略生成action
+            # generate action with original policy
             B_action_copy = (
                 self.generate_pseudo_action(logit, candidate_mask, mode="sample")
                 .cpu()
                 .numpy()
             )
-            # 生成mask
+            # generate mask
             critical_logits = self.critical_head(h_t)
             critical_probs = F.softmax(
                 critical_logits, 1
             )  # sampling an action from model
             critical_c = torch.distributions.Categorical(critical_probs)
             critical_a_t = critical_c.sample().detach()
-            # 统计掩码个数
+            # count the number of masks
             mask_action = 1 - critical_a_t
             num_mask = torch.sum(mask_action[~ended])
             num_masks.append(num_mask)
@@ -721,7 +675,7 @@ class Seq2SeqAgent(BaseAgent):
             self.logs["entropy"].append(critical_c.entropy().sum().item())  # For log
             entropys.append(critical_c.entropy())  # For optimization
 
-            # 确定真实动作
+            # determine the real action
             mask_action_copy = critical_a_t.cpu().numpy()
             real_action = []
             for i in range(batch_size):
@@ -732,13 +686,13 @@ class Seq2SeqAgent(BaseAgent):
                     # real_action.append(np.random.choice(len(B_action_options[i])))
                     n = candidate_leng[i]
                     if n == 0:
-                        # 处理无选项情况（根据实际需求调整）
+                        # handle the case without options (adjust according to actual needs)
                         real_action.append(-1)
                     elif n == 1:
-                        # 只有1个选项时直接选择
+                        # when there is only 1 option, select directly
                         real_action.append(0)
                     else:
-                        # 生成不等于B_action_copy[i]的随机索引
+                        # generate a random index that is not equal to B_action_copy[i]
                         while True:
                             idx = np.random.choice(n)
                             if idx != B_action_copy[i]:
@@ -800,10 +754,10 @@ class Seq2SeqAgent(BaseAgent):
                             # Miss the target penalty
                             if (last_dist[i] <= 1.0) and (dist[i] - last_dist[i] > 0.0):
                                 reward[i] -= (1.0 - last_dist[i]) * 2.0
-                    # reward += 0.1 * num_mask.cpu().numpy() # 把掩码添加到奖励中，掩码越多越好
+                    # reward += 0.1 * num_mask.cpu().numpy() # add the mask to the reward, the more masks, the better
                 reward += (
                     1.5 * mask_action.cpu().numpy()
-                )  # 把掩码添加到奖励中，掩码越多越好
+                )  # add the mask to the reward, the more masks, the better
                 rewards.append(reward)
                 masks.append(mask)
                 last_dist[:] = dist
@@ -876,7 +830,6 @@ class Seq2SeqAgent(BaseAgent):
 
                 rl_loss += (-policy_log_probs[t] * a_ * mask_).sum()
                 rl_loss += (((r_ - v_) ** 2) * mask_).sum() * 0.5  # 1/2 L2 loss
-                # rl_loss += -1e-3 * num_masks[t]  # 限制掩码的数量，越多越好
                 if self.feedback == "sample":
                     rl_loss += (-0.01 * entropys[t] * mask_).sum()
                 self.logs["critic_loss"].append((((r_ - v_) ** 2) * mask_).sum().item())
@@ -987,7 +940,6 @@ class Seq2SeqAgent(BaseAgent):
 
         for t in range(self.episode_len):
             input_a_t, candidate_feat, candidate_leng = self.get_input_feat(perm_obs)
-            # print("-------- t-", t)
             # the first [CLS] token, initialized by the language BERT, serves
             # as the agent's state passing through time steps
             if (t >= 1) or (args.vlnbert == "prevalent"):
@@ -1298,11 +1250,9 @@ class Seq2SeqAgent(BaseAgent):
                     self.rollout(train_ml=args.teacher_weight, train_rl=False, **kwargs)
                     # dagger
                     self.feedback = "sample"
-                    # self.feedback = "argmax"
                     self.rollout(train_ml=args.teacher_weight, train_rl=False, **kwargs)
                     # RL
                     self.feedback = "sample"
-                    # self.feedback = "argmax"
                     self.rollout(train_ml=None, train_rl=True, **kwargs)
                 else:
                     assert False
@@ -1331,17 +1281,6 @@ class Seq2SeqAgent(BaseAgent):
                             "LAST_iter%d" % (iter),
                         ),
                     )
-                else:
-                    # self.save(
-                    #     iter,
-                    #     os.path.join(
-                    #         "snap",
-                    #         args.name,
-                    #         "surrogate_mapgpt",
-                    #         "LAST_iter%d" % (iter),
-                    #     ),
-                    # )
-                    pass
             if args.aug is None:
                 print_progress(
                     iter,
@@ -1392,8 +1331,6 @@ class Seq2SeqAgent(BaseAgent):
             }
 
         all_tuple = [
-            # ("vln_bert", self.vln_bert, self.vln_bert_optimizer),
-            # ("critic", self.critic, self.critic_optimizer),
             ("critical_head", self.critical_head, self.critical_head_optimizer),
             ("critic4mask", self.critic4mask, self.critic_optimizer4mask),
         ]
@@ -1427,21 +1364,7 @@ class Seq2SeqAgent(BaseAgent):
             ("vln_bert", self.vln_bert, self.vln_bert_optimizer),
             ("critic", self.critic, self.critic_optimizer),
         ]
-        # all_tuple.append(
-        #     (
-        #         "vln_bert_noneupdate",
-        #         self.vln_bert_noneupdate,
-        #         self.vln_bert_noneupdate_optimizer,
-        #     )
-        # )
         if args.ablation_pretrained:
-            # all_tuple.append = [
-            #     (
-            #         "vln_bert_noneupdate",
-            #         self.vln_bert_noneupdate,
-            #         self.vln_bert_noneupdate_optimizer,
-            #     ),
-            # ]
             all_tuple = [
                 # don't initialize vln_bert
                 (
@@ -1523,36 +1446,16 @@ class Seq2SeqAgent(BaseAgent):
             self.results = {}
             print("--------- baseline -------------")
             while True:
-                # for i in range(2):
-                if "random" not in args.timelevelbaseline:
-                    (
-                        traj,
-                        total_reward,
-                        total_discounted_reward,
-                        count,
-                        num_mask,
-                        mask_pos,
-                        action_seq,
-                        mask_probs,
-                    ) = self.rollout_mask_test(
-                        test_model="baseline", threshod=0.0010298475390300155
-                    )
-                elif "random" in args.timelevelbaseline:
-                    (
-                        traj,
-                        total_reward,
-                        total_discounted_reward,
-                        count,
-                        num_mask,
-                        mask_pos,
-                        action_seq,
-                        mask_probs,
-                    ) = self.rollout_mask_test(
-                        test_model="baseline", save_rand_prob=True
-                    )
-                # ) = self.rollout_mask_test(test_model="baseline")
-                # ) = self.rollout_mask_test(test_model="baseline", save_rand_prob=True)
-                # for traj in self.test_rollout(**kwargs):
+                (
+                    traj,
+                    total_reward,
+                    total_discounted_reward,
+                    count,
+                    num_mask,
+                    mask_pos,
+                    action_seq,
+                    mask_probs,
+                ) = self.rollout_mask_test(test_model="baseline", threshod=0.5)
                 tmp_rewards_baseline.append(total_reward)
                 tmp_disc_rewards_baseline.append(total_discounted_reward)
                 tmp_counts_baseline.append(count)
@@ -1561,8 +1464,6 @@ class Seq2SeqAgent(BaseAgent):
                 num_mask_baseline.append(num_mask)
                 mask_pos_baseline.append(mask_pos)
                 traj_baseline.append(traj)
-                # print(traj["instr_id"])
-                # exit(0)
                 if traj["instr_id"] in self.results:
                     looped = True
                 else:
@@ -1570,16 +1471,7 @@ class Seq2SeqAgent(BaseAgent):
                 if looped:
                     break
 
-            print(self.a)
-            print(self.b)
-            print(self.b / self.a)
             self.save_intermediate(
-                # "random_nopadding",
-                # "baseline",
-                # "gradient_merge",
-                # "ablation",
-                # "statemask",
-                # "value-based4",
                 args.timelevelbaseline,
                 "baseline",
                 {
@@ -1593,150 +1485,11 @@ class Seq2SeqAgent(BaseAgent):
                     "mask_pos": mask_pos_baseline,
                 },
             )
-            # ---------------
-            # all = []
-            # for probs in tmp_mask_probs_baseline:
-            #     all.extend(probs)
-            # second_items = torch.stack([t[1] for t in all])
-            # # Step 2: sort descending
-            # sorted_vals, sorted_idx = torch.sort(second_items, descending=True)
-
-            # # Step 3: pick the 30% index
-            # n = len(sorted_vals)
-            # k3 = max(1, int(n * 0.3)) - 1  # -1 because index is 0-based
-            # k3 = max(0, k3)  # clamp to 0 if needed
-            # k7 = max(1, int(n * 0.7)) - 1  # -1 because index is 0-based
-            # k7 = max(0, k7)  # clamp to 0 if needed
-
-            # val30 = sorted_vals[k3]  # the actual 30% value
-            # tensor30 = all[sorted_idx[k3]]  # the tensor that gave it
-
-            # print("30% biggest value (2nd item):", val30.item())
-            # print("Tensor at 30%:", tensor30)
-
-            # val70 = sorted_vals[k7]  # the actual 30% value
-            # tensor70 = all[sorted_idx[k7]]  # the tensor that gave it
-
-            # print("70% biggest value (2nd item):", val70.item())
-            # print("Tensor at 70%:", tensor70)
-
-            # exit()
-            # # 保存到文件
-            # with open("./cache/reward_baseline.pkl", "wb") as f:
-            #     pickle.dump(tmp_rewards_baseline, f)
-
-            # # -----------test within mask agent's changing its actions-------------
-            # self.a = 0
-            # self.b = 0
-            # tmp_rewards_mask = []
-            # tmp_counts_mask = []
-            # tmp_disc_rewards_mask = []
-            # actions_mask = []
-            # tmp_mask_probs_mask = []
-            # num_mask_mask = []
-            # mask_pos_mask = []
-            # traj_mask = []
-            # looped = False
-            # self.env.reset_epoch(shuffle=(iters is not None))
-            # self.results = {}
-            # print("--------- mask -------------")
-            # while True:
-            #     # for i in range(2):
-            #     (
-            #         traj,
-            #         total_reward,
-            #         total_discounted_reward,
-            #         count,
-            #         num_mask,
-            #         mask_pos,
-            #         action_seq,
-            #         mask_probs,
-            #         # ) = self.rollout_mask_test(test_model="mask")
-            #         # ) = self.rollout_mask_test(test_model="random_baseline", threshod=0.7)
-            #     ) = self.rollout_mask_test(test_model="mask", threshod=-1.0203859)
-            #     tmp_rewards_mask.append(total_reward)
-            #     tmp_disc_rewards_mask.append(total_discounted_reward)
-            #     tmp_counts_mask.append(count)
-            #     actions_mask.append(action_seq)
-            #     tmp_mask_probs_mask.append(mask_probs)
-            #     num_mask_mask.append(num_mask)
-            #     mask_pos_mask.append(mask_pos)
-            #     traj_mask.append(traj)
-            #     # for traj in self.test_rollout(**kwargs):
-            #     # print(traj["instr_id"])
-            #     if traj["instr_id"] in self.results:
-            #         looped = True
-            #     else:
-            #         self.results[traj["instr_id"]] = traj
-            #     if looped:
-            #         break
-            # print(self.a)
-            # print(self.b)
-            # print(self.b / self.a)
-            # self.save_intermediate(
-            #     "ours100",
-            #     "mask",
-            #     {
-            #         "trajs": traj_mask,
-            #         "rewards": tmp_rewards_mask,
-            #         "disc_rewards": tmp_disc_rewards_mask,
-            #         "counts": tmp_counts_mask,
-            #         "actions": actions_mask,
-            #         "mask_probs": tmp_mask_probs_mask,
-            #         "num_masks": num_mask_mask,
-            #         "mask_pos": mask_pos_mask,
-            #     },
-            # )
-
-            # # tmp_disc_rewards_baseline = self.load_intermediate(
-            # #     "value-based",
-            # #     "baseline",
-            # # )["disc_rewards"]
-            # # tmp_disc_rewards_mask = self.load_intermediate(
-            # #     "value-based",
-            # #     "mask",
-            # # )["disc_rewards"]
-            # # tmp_mask_probs_baseline = self.load_intermediate(
-            # #     "value-based",
-            # #     "baseline",
-            # # )["mask_probs"]
-            # # for i_, traj_ in enumerate(tmp_mask_probs_baseline):
-            # #     for j_, traj_vp in enumerate(traj_):
-            # #         tmp_mask_probs_baseline[i_][j_] = traj_vp.cpu()
-            # # tmp_counts_baseline = self.load_intermediate(
-            # #     "value-based",
-            # #     "baseline",
-            # # )["counts"]
-            # # actions_baseline = self.load_intermediate(
-            # #     "value-based",
-            # #     "baseline",
-            # # )["actions"]
-
-            # expected_reward_preservation = abs(
-            #     np.array(tmp_disc_rewards_baseline) - np.array(tmp_disc_rewards_mask)
-            # ).mean() / abs(np.mean(tmp_disc_rewards_baseline))
-            # tmp_mask_probs_baseline = self.load_intermediate(
-            #     args.timelevelbaseline,
-            #     "baseline",
-            # )["mask_probs"]
-            # tmp_counts_baseline = self.load_intermediate(
-            #     args.timelevelbaseline,
-            #     "baseline",
-            # )["counts"]
-            # actions_baseline = self.load_intermediate(
-            #     args.timelevelbaseline,
-            #     "baseline",
-            # )["actions"]
-            # tmp_disc_rewards_baseline = self.load_intermediate(
-            #     args.timelevelbaseline,
-            #     "baseline",
-            # )["disc_rewards"]
             # NOTE----------------------------------
-            expected_reward_preservation = 0
             critical_steps_starts, critical_steps_ends = select_critical_steps(
                 tmp_mask_probs_baseline, tmp_counts_baseline, random_zone=False
             )
-            for i in range(100):
+            for i in range(10):
                 print(critical_steps_starts[i], critical_steps_ends[i])
             # ----------------------------- replay ------------------------
             looped = False
@@ -1754,7 +1507,6 @@ class Seq2SeqAgent(BaseAgent):
             self.a = self.b = 0
             print("--------- replay -------------")
             while True:
-                # for i in range(2):
                 replay_info = {
                     "critical_steps_starts": critical_steps_starts[traj_index],
                     "critical_steps_ends": critical_steps_ends[traj_index],
@@ -1769,15 +1521,10 @@ class Seq2SeqAgent(BaseAgent):
                     mask_pos,
                     action_seq,
                     mask_probs,
-                    # ) = self.rollout_mask_test(
-                    #     test_model="replay",
-                    #     replay_info=replay_info,
-                    #     threshod=0.0010298475390300155,
-                    # )
                 ) = self.rollout_mask_test(
                     test_model="replay",
                     replay_info=replay_info,
-                    threshod=0.7,
+                    threshod=0.5,
                 )
                 tmp_rewards_replay.append(total_reward)
                 tmp_disc_rewards_replay.append(total_discounted_reward)
@@ -1787,10 +1534,7 @@ class Seq2SeqAgent(BaseAgent):
                 num_mask_replay.append(num_mask)
                 mask_pos_replay.append(mask_pos)
                 traj_replay.append(traj)
-                # tmp_counts_mask.append(count)
-                # for traj in self.test_rollout(**kwargs):
                 traj_index += 1
-                # print(traj["instr_id"])
                 if traj["instr_id"] in self.results:
                     looped = True
                 else:
@@ -1799,11 +1543,6 @@ class Seq2SeqAgent(BaseAgent):
                     break
 
             self.save_intermediate(
-                # "random_nopadding",
-                # "gradient_merge",
-                # "ablation",
-                # "statemask",
-                # "value-based4",
                 args.timelevelbaseline,
                 "replay",
                 {
@@ -1824,7 +1563,7 @@ class Seq2SeqAgent(BaseAgent):
                 tmp_disc_rewards_replay,
                 tmp_disc_rewards_baseline,
             )
-            return expected_reward_preservation, fidelity_score
+            return fidelity_score
 
     def rollout_mask_test(
         self,
@@ -1909,12 +1648,8 @@ class Seq2SeqAgent(BaseAgent):
         )  # Indices match permuation of the model, not env
 
         # Init the logs
-        # rewards = []
         hidden_states = []
         policy_log_probs = []
-        # masks = []
-        # entropys = []
-        # ml_loss = 0.0
 
         for t in range(self.episode_len):
 
@@ -1953,7 +1688,7 @@ class Seq2SeqAgent(BaseAgent):
             candidate_mask = vln_utils.length2mask(candidate_leng)
             # logit.masked_fill_(candidate_mask, -float("inf"))
 
-            # 用原策略生成action
+            # generate action with original policy
             do_inference = True
             if test_model == "replay" and t <= critical_steps_end:
                 do_inference = False
@@ -1964,10 +1699,8 @@ class Seq2SeqAgent(BaseAgent):
             )
             # B_action_options = state_t["nav_inputs"]["vp_cand_vpids"]
 
-            # 生成mask
+            # generate mask
             critical_logits = self.critical_head(h_t).unsqueeze(0)  # NOTE
-            # print(critical_logits)
-            # print(critical_logits.shape)
             critical_probs = F.softmax(
                 critical_logits, 1
             )  # sampling an action from model
@@ -1977,64 +1710,43 @@ class Seq2SeqAgent(BaseAgent):
             rand_f = np.random.rand()
             if save_rand_prob:
                 mask_probs[t][1] = rand_f
-            # if test_model == "replay":
-            #     if rand_f < threshod:
-            #         critical_a_t = 1
-            #     else:
-            #         critical_a_t = 0
 
-            # 统计掩码个数
+            # count the number of masks
             mask_action = 1 - critical_a_t
             num_mask = torch.sum(mask_action[~ended])
             num_action_total += torch.sum(torch.ones_like(mask_action)[~ended])
             num_mask_total += num_mask
-            # policy_log_probs.append(critical_c.log_prob(critical_a_t))
 
-            # self.logs["entropy"].append(critical_c.entropy().sum().item())  # For log
-            # entropys.append(critical_c.entropy())  # For optimization
-
-            # 确定真实动作
+            # determine the real action
             mask_action_copy = critical_a_t.cpu().numpy()
             real_action = []
             for i in range(batch_size):
-                # mask_action_copy[i] = 1
                 if test_model == "baseline":
                     mask_action_copy[i] = 1
                 elif (
                     test_model == "replay"
                     and critical_steps_start <= t <= critical_steps_end
-                ):  # do random choice
+                ):  # generate action randomly
                     mask_action_copy[i] = 0
                 elif (
                     test_model == "replay" and t > critical_steps_end
-                ):  # follow ori policy
+                ):  # follow the original policy
                     mask_action_copy[i] = 1
-                # elif (
-                #     test_model == "random_baseline"
-                #     or (test_model == "replay" and threshod is not None)
-                # ):
-                #     # prob = np.random.rand()
-                #     if rand_f < threshod:  # critical
-                #         mask_action_copy[i] = 1
-                #     else:
-                #         mask_action_copy[i] = 0
-                #     # mask_probs[t][1] = prob
 
                 if test_model == "replay" and t < critical_steps_start:
                     real_action.append(recorded_actions[t])
                 elif mask_action_copy[i] == 1:
                     real_action.append(B_action_copy[i])
                 else:
-                    # real_action.append(np.random.choice(len(B_action_options[i])))
                     n = candidate_leng[i]
                     if n == 0:
-                        # 处理无选项情况（根据实际需求调整）
+                        # handle the case without options (adjust according to actual needs)
                         real_action.append(-1)
                     elif n == 1:
-                        # 只有1个选项时直接选择
+                        # when there is only 1 option, select directly
                         real_action.append(0)
                     else:
-                        # 生成不等于B_action_copy[i]的随机索引
+                        # generate a random index that is not equal to B_action_copy[i]
                         while True:
                             idx = np.random.choice(n)
                             if idx != B_action_copy[i]:
@@ -2045,7 +1757,6 @@ class Seq2SeqAgent(BaseAgent):
 
             # Prepare environment action
             # NOTE: Env action is in the perm_obs space
-            # cpu_a_t = a_t.cpu().numpy()
             cpu_a_t = real_action
             for i, next_id in enumerate(cpu_a_t):
                 if (
@@ -2098,8 +1809,6 @@ class Seq2SeqAgent(BaseAgent):
                             # Miss the target penalty
                             if (last_dist[i] <= 1.0) and (dist[i] - last_dist[i] > 0.0):
                                 reward[i] -= (1.0 - last_dist[i]) * 2.0
-                # rewards.append(reward)
-                # masks.append(mask)
                 last_dist[:] = dist
                 last_ndtw[:] = ndtw_score
             total_reward += reward[0]
@@ -2113,22 +1822,11 @@ class Seq2SeqAgent(BaseAgent):
                 break
         # end for
 
-        # print("total reward", self.if_succeed(perm_obs, traj))
-
-        # if (
-        #     type(self.loss) is int
-        # ):  # For safety, it will be activated if no losses are added
-        #     self.losses.append(0.0)
-        # else:
-        #     self.losses.append(
-        #         self.loss.item() / self.episode_len
-        #     )  # This argument is useless.
         self.a += num_action_total
         self.b += num_mask_total
         return (
             traj[i],
             total_reward,
-            # total_discounted_reward,
             self.if_succeed(perm_obs, traj)[0],
             t + 1,
             num_mask_total,
@@ -2137,300 +1835,8 @@ class Seq2SeqAgent(BaseAgent):
             mask_probs,
         )
 
-    def rollout_gail(self, train_rl=True, reset=True):
-        """
-        [state, action, irl_reward, mask] is needed to be collected
-        """
-        # if self.feedback == "teacher" or self.feedback == "argmax":
-        #     train_rl = False
-        memory_curr = deque()
-        if reset:  # Reset env
-            obs = np.array(self.env.reset())
-        else:
-            # obs = np.array(self.env._get_obs())
-            obs = np.array(self.env.reset_to_starting_point())
-
-        batch_size = len(obs)
-
-        # Language input
-        sentence, language_attention_mask, token_type_ids, seq_lengths, perm_idx = (
-            self._sort_batch(obs)
-        )
-        perm_obs = obs[perm_idx]
-
-        """ Language BERT """
-        language_inputs = {
-            "mode": "language",
-            "sentence": sentence,
-            "attention_mask": language_attention_mask,
-            "lang_mask": language_attention_mask,
-            "token_type_ids": token_type_ids,
-        }
-        if args.vlnbert == "oscar":
-            language_features = self.vln_bert(**language_inputs)
-        elif args.vlnbert == "prevalent":
-            h_t, language_features = self.vln_bert(**language_inputs)
-
-        # Record starting point
-        traj = [
-            {
-                "instr_id": ob["instr_id"],
-                "path": [(ob["viewpoint"], ob["heading"], ob["elevation"])],
-            }
-            for ob in perm_obs
-        ]
-
-        # Init the reward shaping
-        last_dist = np.zeros(batch_size, np.float32)
-        last_ndtw = np.zeros(batch_size, np.float32)
-        for i, ob in enumerate(
-            perm_obs
-        ):  # The init distance from the view point to the target
-            last_dist[i] = ob["distance"]
-            path_act = [vp[0] for vp in traj[i]["path"]]
-            last_ndtw[i] = self.ndtw_criterion[ob["scan"]](
-                path_act, ob["gt_path"], metric="ndtw"
-            )
-
-        # Initialization the tracking state
-        ended = np.array(
-            [False] * batch_size
-        )  # Indices match permuation of the model, not env
-
-        # Init the logs
-        rewards = []
-        hidden_states = []
-        policy_log_probs = []
-        masks = []
-        entropys = []
-        ml_loss = 0.0
-
-        for t in range(self.episode_len):
-
-            input_a_t, candidate_feat, candidate_leng = self.get_input_feat(perm_obs)
-
-            # the first [CLS] token, initialized by the language BERT, serves
-            # as the agent's state passing through time steps
-            if (t >= 1) or (args.vlnbert == "prevalent"):
-                language_features = torch.cat(
-                    (h_t.unsqueeze(1), language_features[:, 1:, :]), dim=1
-                )
-
-            visual_temp_mask = (vln_utils.length2mask(candidate_leng) == 0).long()
-            visual_attention_mask = torch.cat(
-                (language_attention_mask, visual_temp_mask), dim=-1
-            )
-
-            self.vln_bert.vln_bert.config.directions = max(candidate_leng)
-            """ Visual BERT """
-            visual_inputs = {
-                "mode": "visual",
-                "sentence": language_features,
-                "attention_mask": visual_attention_mask,
-                "lang_mask": language_attention_mask,
-                "vis_mask": visual_temp_mask,
-                "token_type_ids": token_type_ids,
-                "action_feats": input_a_t,
-                # 'pano_feats':         f_t,
-                "cand_feats": candidate_feat,
-            }
-            h_t, logit = self.vln_bert(**visual_inputs)
-            hidden_states.append(h_t)
-
-            # Mask outputs where agent can't move forward
-            # Here the logit is [b, max_candidate]
-            candidate_mask = vln_utils.length2mask(candidate_leng)
-            logit.masked_fill_(candidate_mask, -float("inf"))
-
-            # Determine next model inputs
-            if self.feedback == "teacher":
-                target = self._teacher_action(perm_obs, ended)
-                a_t = target  # teacher forcing
-            elif self.feedback == "argmax":
-                _, a_t = logit.max(1)  # student forcing - argmax
-                a_t = a_t.detach()
-                log_probs = F.log_softmax(logit, 1)  # Calculate the log_prob here
-                policy_log_probs.append(
-                    log_probs.gather(1, a_t.unsqueeze(1))
-                )  # Gather the log_prob for each batch
-            elif self.feedback == "sample":
-                probs = F.softmax(logit, 1)  # sampling an action from model
-                c = torch.distributions.Categorical(probs)
-                self.logs["entropy"].append(c.entropy().sum().item())  # For log
-                entropys.append(c.entropy())  # For optimization
-                a_t = c.sample().detach()
-                policy_log_probs.append(c.log_prob(a_t))
-            elif self.feedback == "dagger":
-                target = self.DAgger_action(
-                    perm_obs,
-                    # vpids,
-                    [perm_obs[i]["candidate"] for i in range(len(perm_obs))],
-                    ended,
-                    visited_masks=None,
-                )
-                a_t = target
-
-                probs = F.softmax(logit, 1)  # sampling an action from model
-                c = torch.distributions.Categorical(probs)
-                entropys.append(c.entropy())  # For optimization
-                a_t_sample = c.sample().detach()
-            else:
-                print(self.feedback)
-                sys.exit("Invalid feedback option")
-
-            # get action feature and irl reward
-            for x in range(len(a_t)):
-                if a_t[x] == args.ignoreid:
-                    a_t[x] = len(obs[x]["candidate"])
-            action_feat = torch.stack(
-                [candidate_feat[x, a_t[x], :] for x in range(len(obs))]
-            )
-            irl_reward = get_reward(self.discrim, h_t, action_feat)
-
-            # Prepare environment action
-            # NOTE: Env action is in the perm_obs space
-            if self.feedback != "dagger":
-                cpu_a_t = a_t.cpu().numpy()
-            elif self.feedback == "dagger":
-                cpu_a_t = a_t_sample.cpu().numpy()
-            else:
-                print(self.feedback)
-                sys.exit("Invalid feedback option")
-
-            for i, next_id in enumerate(cpu_a_t):
-                if (
-                    next_id == (candidate_leng[i] - 1)
-                    or next_id == args.ignoreid
-                    or ended[i]
-                ):  # The last action is <end>
-                    cpu_a_t[i] = -1  # Change the <end> and ignore action to -1
-
-            # Make action and get the new state
-            self.make_equiv_action(cpu_a_t, perm_obs, perm_idx, traj)
-            obs = np.array(self.env._get_obs())
-            perm_obs = obs[perm_idx]  # Perm the obs for the resu
-
-            if train_rl:
-                # Calculate the mask and reward
-                dist = np.zeros(batch_size, np.float32)
-                ndtw_score = np.zeros(batch_size, np.float32)
-                reward = np.zeros(batch_size, np.float32)
-                mask = np.ones(batch_size, np.float32)
-                for i, ob in enumerate(perm_obs):
-                    dist[i] = ob["distance"]
-                    path_act = [vp[0] for vp in traj[i]["path"]]
-                    ndtw_score[i] = self.ndtw_criterion[ob["scan"]](
-                        path_act, ob["gt_path"], metric="ndtw"
-                    )
-
-                    if ended[i]:
-                        reward[i] = 0.0
-                        mask[i] = 0.0
-                    else:
-                        action_idx = cpu_a_t[i]
-                        # Target reward
-                        if action_idx == -1:  # If the action now is end
-                            if dist[i] < 3.0:  # Correct
-                                reward[i] = 2.0 + ndtw_score[i] * 2.0
-                            else:  # Incorrect
-                                reward[i] = -2.0
-                        else:  # The action is not end
-                            # Path fidelity rewards (distance & nDTW)
-                            reward[i] = -(dist[i] - last_dist[i])
-                            ndtw_reward = ndtw_score[i] - last_ndtw[i]
-                            if reward[i] > 0.0:  # Quantification
-                                reward[i] = 1.0 + ndtw_reward
-                            elif reward[i] < 0.0:
-                                reward[i] = -1.0 + ndtw_reward
-                            else:
-                                # Action didn't change distance - give a small penalty
-                                reward[i] = -0.1  # Small penalty for not moving
-                            # Miss the target penalty
-                            if (last_dist[i] <= 1.0) and (dist[i] - last_dist[i] > 0.0):
-                                reward[i] -= (1.0 - last_dist[i]) * 2.0
-                rewards.append(reward)
-                masks.append(mask)
-                last_dist[:] = dist
-                last_ndtw[:] = ndtw_score
-
-            # Update the finished actions
-            # -1 means ended or ignored (already ended)
-            ended[:] = np.logical_or(ended, (cpu_a_t == -1))
-            # collect rollouts
-            memory_curr.append([h_t, a_t, irl_reward, mask, visual_inputs, action_feat])
-            # Early exit if all ended
-            if ended.all():
-                break
-
-        return memory_curr
-
-    def train_gail(self, n_iters):
-        train_discrim_flag = True
-
-        # for iter in range(args.gail_iteration):
-        for iter in range(1, n_iters + 1):
-            # collect trajectories
-            memory = deque()
-            demonstrations = deque()
-            self.vln_bert.eval()
-            self.critic.eval()
-            self.discrim.eval()
-
-            self.feedback = "sample"
-            memory_curr = self.rollout_gail(train_rl=True)
-            self.feedback = "teacher"
-            demonstration_curr = self.rollout_gail(train_rl=True, reset=False)
-            memory.extend(memory_curr)
-            demonstrations.extend(demonstration_curr)
-            for _ in range(1, args.update_interval):
-                self.feedback = "sample"
-                memory_curr = self.rollout_gail(train_rl=True, reset=False)
-                memory.extend(memory_curr)
-
-            for _ in range(args.gail_sample_num):
-                self.feedback == "dagger"
-                demonstration_curr = self.rollout_gail(train_rl=True, reset=False)
-                demonstrations.extend(demonstration_curr)
-
-            # update
-            self.vln_bert.train()
-            self.critic.train()
-            self.discrim.train()
-
-            # update discriminator
-            if train_discrim_flag:
-                expert_acc, learner_acc = train_discrim(
-                    self.discrim,
-                    memory,
-                    self.optimizer4discrim,
-                    demonstrations,
-                    args,
-                    self.logs,
-                )
-                print(
-                    "Expert: %.2f%% | Learner: %.2f%%"
-                    % (expert_acc * 100, learner_acc * 100)
-                )
-                if (
-                    expert_acc > args.suspend_accu_exp
-                    and learner_acc > args.suspend_accu_gen
-                ):
-                    train_discrim_flag = False
-
-            # update actor and critic
-            train_actor_critic_v2(
-                self.vln_bert,
-                self.critic,
-                memory,
-                self.vln_bert_optimizer,
-                self.critic_optimizer,
-                args,
-                self.logs,
-            )
-
     def save_intermediate(self, dir_name, file_name, test_dict):
         the_dir = os.path.join("snap", args.name, "intermediate_test", dir_name)
-        # the_dir = os.path.join(NAVGPT_STEP_EVAL_DIR, "intermediate_test", dir_name)
         os.makedirs(the_dir, exist_ok=True)
         with open(os.path.join(the_dir, file_name + ".pkl"), "wb") as f:
             pickle.dump(
@@ -2440,7 +1846,6 @@ class Seq2SeqAgent(BaseAgent):
 
     def load_intermediate(self, dir_name, file_name):
         the_dir = os.path.join("snap", args.name, "intermediate_test", dir_name)
-        # the_dir = os.path.join(NAVGPT_STEP_EVAL_DIR, "intermediate_test", dir_name)
         with open(os.path.join(the_dir, file_name + ".pkl"), "rb") as f:
             data = pickle.load(f)
         return data

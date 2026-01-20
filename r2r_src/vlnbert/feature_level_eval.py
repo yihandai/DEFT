@@ -17,7 +17,7 @@ except ImportError:
 
     OPENAI_NEW_API = False
 # 在文件顶部添加
-OPENAI_API_KEY = "sk-UFY65v7WihZAvfTf8YvaYggif3kKJrzmzfTTiLveKS2jOJwa"
+OPENAI_API_KEY = "YOUR_API_KEY"
 OPENAI_BASE_URL = "https://api.chatanywhere.tech/v1"
 from tenacity import (
     retry,

@@ -307,8 +307,6 @@ class FeatureAgent(MaskAgent):
                 W=640,
                 target="MapGPT",
             )
-            # self.groud_truth = self.get_gt()
-            self.VERSION = "v3"
             # saving locations
             self.segmentation_map_dir = os.path.join(
                 "snap",
@@ -318,16 +316,12 @@ class FeatureAgent(MaskAgent):
             if not os.path.exists(self.segmentation_map_dir):
                 os.makedirs(self.segmentation_map_dir)
             # saliency map location
-            saliency_map_dir = os.path.join(
-                "snap", args.name + self.VERSION, "saliency_map_pixel"
-            )
+            saliency_map_dir = os.path.join("snap", args.name, "saliency_map_pixel")
             if not os.path.exists(saliency_map_dir):
                 os.makedirs(saliency_map_dir)
             self.saliency_map_dir = saliency_map_dir
             # causal metric location
-            causal_metric_dir = os.path.join(
-                "snap", args.name + self.VERSION, "causal_metric_pixel" + "replication2"
-            )
+            causal_metric_dir = os.path.join("snap", args.name, "causal_metric_pixel")
             if not os.path.exists(causal_metric_dir):
                 os.makedirs(causal_metric_dir)
             self.causal_metric_dir = causal_metric_dir
@@ -340,7 +334,6 @@ class FeatureAgent(MaskAgent):
         phase_merge = False
         original_image = False
         mu = False
-        # test_num = 1
 
         if phase2:
             self.env.reset_epoch(
@@ -1193,56 +1186,10 @@ class FeatureAgent(MaskAgent):
                         mode=test_model,
                     )
                 )
-            elif test_model in ["guided_IG"]:
-                images, attribution, candidata_list = self.exp.get_guided_ig(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features,
-                    language_inputs,
-                    language_attention_mask,
-                    token_type_ids,
-                )
-            elif test_model in ["smdl"]:
-                images, attribution, candidata_list = self.exp.exp(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["random"]:
-                images, attribution, candidata_list = self.exp.compute_random_salency(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["fg_cam"]:
-                images, attribution, candidata_list = self.exp.compute_FG_CAM(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
             else:
                 print(f"test_model {test_model} not supported")
                 exit(0)
 
-            # if test_model in ["IG", "temporal", "IG_temporal", "guided_IG"]:
-            # scanId = perm_obs[0]["scanId"]
-            # viewpointId = perm_obs[0]["viewpointId"]
-
-            # scanId = perm_obs[0]["scan"]
-            # viewpointId = perm_obs[0]["viewpoint"]
             instr_id = perm_obs[0]["instr_id"]
             XRAI_test = XRAI()
             if expand_patch:
@@ -1314,8 +1261,6 @@ class FeatureAgent(MaskAgent):
             np.save(
                 os.path.join(
                     self.saliency_map_dir,
-                    # f"{scanId}",
-                    # f"{viewpointId}",
                     f"{instr_id}",
                     f"{t}",
                     f"attr_map.npy",
@@ -1325,8 +1270,6 @@ class FeatureAgent(MaskAgent):
             np.save(
                 os.path.join(
                     self.saliency_map_dir,
-                    # f"{scanId}",
-                    # f"{viewpointId}",
                     f"{instr_id}",
                     f"{t}",
                     f"attr_rank.npy",
@@ -1341,11 +1284,7 @@ class FeatureAgent(MaskAgent):
                 "RecVLN", "MapGPT", target_action_surr, candidate_leng
             )
 
-            # 确定真实动作
-            # NOTE: MapGPT 的 real action 里面 0 是停止，
-            # NOTE: 在 RecVLN 里面，candidate_len[i] - 1 是停止
-            # ############### get new obs###########################
-            # for target agent---------------------------
+            # determine the real action
             if self.target_agent is not None:
                 for i in range(batch_size):
                     target_traj[i]["a_t"][t] = target_action[i]
@@ -1439,13 +1378,6 @@ class FeatureAgent(MaskAgent):
             for ob in perm_obs
         ]
 
-        # if not self.find_6992_0 and obs[0]["instr_id"] != "6992_0":
-        #     return traj[0]
-        # else:
-        #     pass
-        # if obs[0]["instr_id"] == "6992_0":
-        #     self.find_6992_0 = True
-
         # Initialization the tracking state
         ended = np.array(
             [False] * batch_size
@@ -1490,10 +1422,6 @@ class FeatureAgent(MaskAgent):
             input_a_t, candidate_feat, candidate_leng = self.get_input_feat(perm_obs)
 
             images, candidata_list = self.exp.get_images_and_candidata_list(perm_obs)
-
-            # if test_model in ["IG", "temporal", "IG_temporal", "guided_IG"]:
-            # scanId = perm_obs[0]["scanId"]
-            # viewpointId = perm_obs[0]["viewpoint"]
 
             instr_id = perm_obs[0]["instr_id"]
 
@@ -1946,18 +1874,8 @@ class FeatureAgent(MaskAgent):
                     saliency_map = np.load(attr_map_path)
                     attr_rank = np.load(attr_rank_path)
 
-                    # # Flatten for hard vote if needed
-                    # if len(saliency_map.shape) > 1:
-                    #     attr_map_list.append(saliency_map)
-                    #     attr_rank_list.append(attr_rank.flatten())
-                    # else:
-                    #     attr_map_list.append(saliency_map)
-                    #     attr_rank_list.append(attr_rank)
                     attr_map_list.append(saliency_map)
                     attr_rank_list.append(attr_rank)
-                # print("shape of attr_map", attr_map_list[0].shape)
-                # print("shape of attr_rank", attr_rank_list[0].shape)
-                # exit()
                 if mode in ["soft_vote", "average"]:
                     ensemble_map, ensemble_rank = soft_vote(attr_map_list)
                 elif mode in ["hard_vote", "vote"]:

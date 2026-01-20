@@ -97,30 +97,6 @@ def get_navgpt_viewpoint_id_from_file(instr_id, t, candidate_dict):
         else:
             return viewpoint_id if viewpoint_id else None
 
-    # # Fallback: try to get from a_t_list (for backward compatibility)
-    # a_t_list = nav_info.get("a_t_list", [])
-    # if not a_t_list:
-    #     return None  # Stop action
-
-    # # Get the most frequent action (similar to get_cls)
-    # a_t_count = Counter(a_t_list)
-    # most_frequent_a_t = a_t_count.most_common(1)[0][0]
-
-    # # If most_frequent_a_t is already a viewpoint_id string, return it
-    # if isinstance(most_frequent_a_t, str) and most_frequent_a_t in candidate_dict:
-    #     return most_frequent_a_t
-
-    # # If it's an index (int), convert to viewpoint_id
-    # if isinstance(most_frequent_a_t, int):
-    #     candidate_list = list(candidate_dict.keys())
-    #     if most_frequent_a_t == 0:
-    #         return None  # Stop action
-    #     elif 1 <= most_frequent_a_t <= len(candidate_list):
-    #         return candidate_list[most_frequent_a_t - 1]
-
-    # # If we still don't have a valid viewpoint_id, return None
-    # return None
-
 
 def NavGPT_genAction_v2(
     agent: NavAgent,
@@ -1132,56 +1108,10 @@ class FeatureAgent_NavGPT(MaskAgent):
                         mode=test_model,
                     )
                 )
-            elif test_model in ["guided_IG"]:
-                images, attribution, candidata_list = self.exp.get_guided_ig(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features,
-                    language_inputs,
-                    language_attention_mask,
-                    token_type_ids,
-                )
-            elif test_model in ["smdl"]:
-                images, attribution, candidata_list = self.exp.exp(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["random"]:
-                images, attribution, candidata_list = self.exp.compute_random_salency(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["fg_cam"]:
-                images, attribution, candidata_list = self.exp.compute_FG_CAM(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
             else:
                 print(f"test_model {test_model} not supported")
                 exit(0)
 
-            # if test_model in ["IG", "temporal", "IG_temporal", "guided_IG"]:
-            # scanId = perm_obs[0]["scanId"]
-            # viewpointId = perm_obs[0]["viewpointId"]
-
-            # scanId = perm_obs[0]["scan"]
-            # viewpointId = perm_obs[0]["viewpoint"]
             instr_id = perm_obs[0]["instr_id"]
             XRAI_test = XRAI()
 
@@ -1214,8 +1144,6 @@ class FeatureAgent_NavGPT(MaskAgent):
             np.save(
                 os.path.join(
                     self.saliency_map_dir,
-                    # f"{scanId}",
-                    # f"{viewpointId}",
                     f"{instr_id}",
                     f"{t}",
                     f"attr_map.npy",
@@ -1225,8 +1153,6 @@ class FeatureAgent_NavGPT(MaskAgent):
             np.save(
                 os.path.join(
                     self.saliency_map_dir,
-                    # f"{scanId}",
-                    # f"{viewpointId}",
                     f"{instr_id}",
                     f"{t}",
                     f"attr_rank.npy",
@@ -1238,13 +1164,6 @@ class FeatureAgent_NavGPT(MaskAgent):
             viewpoint_id = get_navgpt_viewpoint_id_from_file(
                 perm_obs[0]["instr_id"], t, target_perm_obs[0].get("candidate", {})
             )
-            # # Convert viewpoint_id to action index for compatibility
-            # candidate_dict = target_perm_obs[0].get("candidate", {})
-            # if viewpoint_id and viewpoint_id in candidate_dict:
-            #     candidate_list = list(candidate_dict.keys())
-            #     target_action = [candidate_list.index(viewpoint_id) + 1]
-            # else:
-            #     target_action = [0]  # Stop action
             print("viewpoint_id", viewpoint_id)
             candidate_list_surr = perm_obs[0].get("candidate", [])
             if viewpoint_id and viewpoint_id in [
@@ -1267,16 +1186,8 @@ class FeatureAgent_NavGPT(MaskAgent):
             print(
                 "candidate_list_surr", [x["viewpointId"] for x in candidate_list_surr]
             )
-            # # Convert to RecVLN format for action_space_adaptor
-            # target_action_surr = self.action_space_adaptor(
-            #     "MapGPT", "RecVLN", target_action, candidate_leng
-            # )
 
-            # 确定真实动作
-            # NOTE: NavGPT 的 real action 里面 0 是停止，
-            # NOTE: 在 RecVLN 里面，candidate_len[i] - 1 是停止
-            # ############### get new obs###########################
-            # for target agent---------------------------
+            # determine the real action
             if self.target_agent is not None:
                 for i in range(batch_size):
                     target_traj[i]["a_t"][t] = target_action[i]
@@ -1367,7 +1278,6 @@ class FeatureAgent_NavGPT(MaskAgent):
                 ]
 
             cpu_a_t = np.array(target_action_surr)
-            # print("cpu_a_t", cpu_a_t)
             for i, next_id in enumerate(cpu_a_t):
                 if (
                     next_id == (candidate_leng[i] - 1)
@@ -1376,7 +1286,6 @@ class FeatureAgent_NavGPT(MaskAgent):
                 ):  # The last action is <end>
                     cpu_a_t[i] = -1  # Change the <end> and ignore action to -1
 
-            # print("cpu_a_t", cpu_a_t)
             # Make action and get the new state
             self.make_equiv_action(cpu_a_t, perm_obs, perm_idx, traj)
             obs = np.array(self.env._get_obs())
@@ -1478,7 +1387,6 @@ class FeatureAgent_NavGPT(MaskAgent):
                 }
                 for ob in target_perm_obs
             ]
-            # print(target_traj[0]["instr_id"])
             # Initialization the tracking state
             target_ended = np.array([False] * batch_size)
             target_just_ended = np.array([False] * batch_size)
@@ -1520,7 +1428,6 @@ class FeatureAgent_NavGPT(MaskAgent):
                 perm_obs[0]["instr_id"], t, target_perm_obs[0].get("candidate", {})
             )
 
-            # print("viewpoint_id", viewpoint_id)
             candidate_list_surr = perm_obs[0].get("candidate", [])
             if viewpoint_id and viewpoint_id in [
                 x["viewpointId"] for x in candidate_list_surr
@@ -1528,20 +1435,14 @@ class FeatureAgent_NavGPT(MaskAgent):
                 target_action_surr = [
                     [x["viewpointId"] for x in candidate_list_surr].index(viewpoint_id)
                 ]
-                # print("target_action_surr", target_action_surr)
             else:
                 target_action_surr = [len(candidate_list_surr)]  # Stop action
 
             candidata_dict = target_perm_obs[0].get("candidate", {})
             if viewpoint_id and viewpoint_id in candidata_dict.keys():
                 target_action = [list(candidata_dict.keys()).index(viewpoint_id) + 1]
-                # print("target_action", target_action)
             else:
                 target_action = [0]  # Stop action
-            # print("candidata_dict", candidata_dict.keys())
-            # print(
-            #     "candidate_list_surr", [x["viewpointId"] for x in candidate_list_surr]
-            # )
 
             # NOTE: don't need for generating text, keep for simple
             params = (
@@ -1557,18 +1458,15 @@ class FeatureAgent_NavGPT(MaskAgent):
                 img=images[0],
                 mask=attr_map,
                 mask_rank=attr_rank,
-                # cls_idx=target_action[0],
                 cls_idx=None,
                 params=params,
                 mode=mode,
                 mask_perc=perturb_ratio,
-                # topK=5,
                 candidate_idx=candidata_list[0],
                 causal_metric_dir=self.causal_metric_dir,
             )
 
             # save the description update to file
-            # construct by {instr_id}/{t}/{mask_perc}/{ins or del}/description_update.json
             description_update_dir = os.path.join(
                 self.description_update_dir,
                 f"{instr_id}",

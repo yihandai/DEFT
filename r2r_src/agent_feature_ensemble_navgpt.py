@@ -270,46 +270,6 @@ class FeatureAgentEnsemble_NavGPT(FeatureAgent_NavGPT):
                         mode=test_model,
                     )
                 )
-            elif test_model in ["guided_IG"]:
-                images, attribution, candidata_list = self.exp.get_guided_ig(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features,
-                    language_inputs,
-                    language_attention_mask,
-                    token_type_ids,
-                )
-            elif test_model in ["smdl"]:
-                images, attribution, candidata_list = self.exp.exp(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["random"]:
-                images, attribution, candidata_list = self.exp.compute_random_salency(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
-            elif test_model in ["fg_cam"]:
-                images, attribution, candidata_list = self.exp.compute_FG_CAM(
-                    perm_obs,
-                    t,
-                    h_t,
-                    language_features=language_features,
-                    language_inputs=language_inputs,
-                    language_attention_mask=language_attention_mask,
-                    token_type_ids=token_type_ids,
-                )
             else:
                 print(f"test_model {test_model} not supported")
                 exit(0)

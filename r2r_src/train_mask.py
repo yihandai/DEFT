@@ -213,41 +213,16 @@ def valid_mask(train_env, tok, val_envs={}, eval_env=None, target_eval_env=None)
         agent.target_agent.env = target_eval_env  # environment for target agent
 
         iters = None
-        expected_reward_preservation, fidelity_score = agent.test_mask(iters=iters)
-        print(
-            "expected_reward_preservation: {}, fidelity_score: {}".format(
-                expected_reward_preservation, fidelity_score
-            )
-        )
+        fidelity_score = agent.test_mask(iters=iters)
+        print("fidelity_score: {}".format(fidelity_score))
     else:
         for env_name, (env, evaluator) in val_envs.items():
             agent.logs = defaultdict(list)
             agent.env = env
 
             iters = None
-            expected_reward_preservation, fidelity_score = agent.test_mask(iters=iters)
-            print(
-                "expected_reward_preservation: {}, fidelity_score: {}".format(
-                    expected_reward_preservation, fidelity_score
-                )
-            )
-        # result = agent.get_results()
-
-        # if env_name != "":
-        #     score_summary, _ = evaluator.score(result)
-        #     loss_str = "Env name: %s" % env_name
-        #     for metric, val in score_summary.items():
-        #         loss_str += ", %s: %.4f" % (metric, val)
-        #     print(loss_str)
-
-        # if args.submit:
-        #     json.dump(
-        #         result,
-        #         open(os.path.join(log_dir, "submit_%s.json" % env_name), "w"),
-        #         sort_keys=True,
-        #         indent=4,
-        #         separators=(",", ": "),
-        #     )
+            fidelity_score = agent.test_mask(iters=iters)
+            print("fidelity_score: {}".format(fidelity_score))
 
 
 def valid_feature(train_env, tok, val_envs={}, eval_env=None, target_eval_env=None):
@@ -327,23 +302,6 @@ def valid_feature(train_env, tok, val_envs={}, eval_env=None, target_eval_env=No
 
         iters = None
         agent.test(iters=iters)
-        # print(
-        #     "expected_reward_preservation: {}, fidelity_score: {}".format(
-        #         expected_reward_preservation, fidelity_score
-        #     )
-        # )
-    # else:
-    #     for env_name, (env, evaluator) in val_envs.items():
-    #         agent.logs = defaultdict(list)
-    #         agent.env = env
-
-    #         iters = None
-    #         expected_reward_preservation, fidelity_score = agent.test_mask(iters=iters)
-    #         print(
-    #             "expected_reward_preservation: {}, fidelity_score: {}".format(
-    #                 expected_reward_preservation, fidelity_score
-    #             )
-    #         )
 
 
 def setup():
@@ -351,12 +309,6 @@ def setup():
     torch.cuda.manual_seed(1)
     random.seed(0)
     np.random.seed(0)
-    # np.random.seed(42)
-
-    # torch.manual_seed(6)
-    # torch.cuda.manual_seed(6)
-    # random.seed(6)
-    # np.random.seed(6)
 
 
 def train_val(

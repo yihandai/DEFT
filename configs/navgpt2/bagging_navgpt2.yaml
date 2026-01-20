@@ -32,4 +32,4 @@ bagging_agents: 5
 bootstrap_ratio: 0.8
 
 
-start_agent_id: 1
+# start_agent_id: 0
