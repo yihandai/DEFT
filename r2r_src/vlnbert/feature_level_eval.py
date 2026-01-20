@@ -16,7 +16,7 @@ except ImportError:
     import openai
 
     OPENAI_NEW_API = False
-# 在文件顶部添加
+# add your own api key and base url
 OPENAI_API_KEY = "YOUR_API_KEY"
 OPENAI_BASE_URL = "https://api.chatanywhere.tech/v1"
 from tenacity import (
@@ -169,24 +169,6 @@ class CausalMetric(object):
             0.75: {"num": 0, "curr": 0, "rate": 0},
             1.0: {"num": 0, "curr": 0, "rate": 0},
         }
-
-        # self.insertion_curr = {
-        #     0.0: {"num": 0, "curr": 0, "rate": 0},
-        #     0.25: {"num": 146, "curr": 95, "rate": 0.6507},
-        #     0.5: {"num": 146, "curr": 90, "rate": 0.6164},
-        #     0.75: {"num": 146, "curr": 102, "rate": 0.6986},
-        #     1.0: {"num": 0, "curr": 0, "rate": 0},
-        # }
-        # self.deletion_curr = {
-        #     0.0: {"num": 0, "curr": 0, "rate": 0},
-        #     0.25: {"num": 146, "curr": 95, "rate": 0.6507},
-        #     0.5: {"num": 146, "curr": 102, "rate": 0.6986},
-        #     0.75: {"num": 146, "curr": 89, "rate": 0.6096},
-        #     1.0: {"num": 0, "curr": 0, "rate": 0},
-        # }
-
-        # self.insertion_curr = {"num": 310, "curr": 136, "rate": 0.43870967741935485}
-        # self.deletion_curr = {"num": 310, "curr": 129, "rate": 0.4161290322580645}
 
     def upsample_numpy(self, x, new_H, new_W):
         """
@@ -1462,26 +1444,12 @@ class CausalMetric(object):
             os.path.join(description_update_dir, description_file_name), "r"
         ) as f:
             description_update = json.load(f)
-        # format of description_update:
-        # {
-        #     target_cand_idx_1: {
-        #         "description": merged_desc,
-        #         "objects": merged_objects,
-        #     },
-        #     target_cand_idx_2: {
-        #         "description": merged_desc,
-        #         "objects": merged_objects,
-        #     },
-        #     ...
-        # }
-        # merge description and objects
-
-        # NavGPT_genAction_v2 只接受 6 个位置参数，params 包含 7 个元素
-        # 只展开前 6 个参数（agent, obs, t, previous_angle, do_inference, ended）
-        # description_update 作为关键字参数传递
+        # pass description_update as a keyword argument
         prediction = self.call_fn(
             params[0],  # agent
-            params[1],  # obs (perm_obs, 当前观察，可能包含扰动后的图像)
+            params[
+                1
+            ],  # obs (perm_obs, current observation, may contain perturbed images)
             params[2],  # t
             params[3],  # previous_angle
             params[4],  # do_inference
@@ -1584,20 +1552,6 @@ class CausalMetric(object):
         instr_id = ob["instr_id"]
         importance_score = mask.sum()
         mode = "ins" if mode == "Insertion" else "del"
-        # out_file = f"scripts/{args.feature_level_baseline}.json"
-        # out_file = "scripts/ensemble_v3_2025_12_15_phase3.json"
-        # out_file = "scripts/ig_v3_2025_12_15_phase3.json"
-        # out_file = "scripts/random_v3_2025_12_15_phase23_r.json"
-        # if os.path.exists(out_file):
-        #     with open(out_file, "r") as f:
-        #         results = json.load(f)
-        #     if instr_id in results:
-        #         if str(mask_perc) in results[instr_id]["mask"]:
-        #             if mode in results[instr_id]["mask"][str(mask_perc)]:
-        #                 consistency_score = results[instr_id]["mask"][str(mask_perc)][
-        #                     mode
-        #                 ][str(t)]
-        #                 print("load consistency score from file successfully")
 
         save_tuple = np.array([consistency_score, importance_score])
         if not os.path.exists(
@@ -1894,31 +1848,6 @@ class CausalMetric(object):
         cv2.imwrite(save_path, grid_image)
 
         return [save_path]
-
-    # def compute_AUC(self, causal_metric_dir):
-    #     consistency_score = []
-    #     importance_score = []
-    #     for instr_id in os.listdir(
-    #         os.path.join(causal_metric_dir, "consistency_importance_score")
-    #     ):
-    #         for t in os.listdir(
-    #             os.path.join(causal_metric_dir, "consistency_importance_score", instr_id)
-    #         ):
-    #             score = np.load(
-    #                 os.path.join(
-    #                     causal_metric_dir,
-    #                     "consistency_importance_score",
-    #                     instr_id,
-    #                     str(t),
-    #                     "score.npy",
-    #                 )
-    #             )
-    #             consistency_score.append(score[0])
-    #             importance_score.append(score[1])
-    #     return self.AUC(consistency_score, importance_score)
-
-    # def AUC(self, consistency_score, importance_score):
-    #     return roc_auc_score(consistency_score, importance_score)
 
 
 def main():
